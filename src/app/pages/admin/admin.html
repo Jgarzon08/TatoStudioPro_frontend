@@ -281,6 +281,9 @@
                   <div class="client-meta">
                     <h4>{{ msg.fullName }}</h4>
                     <a [href]="'mailto:' + msg.email" class="client-email">{{ msg.email }}</a>
+                    @if (msg.phone) {
+                      <span class="client-phone">📞 Tel/WhatsApp: <a [href]="getWhatsAppReplyUrl(msg)" target="_blank" style="color: #128c7e; font-weight: bold;">{{ msg.phone }}</a></span>
+                    }
                     <span class="event-tag">Evento: {{ msg.eventType }}</span>
                   </div>
 
@@ -312,7 +315,7 @@
                 <div class="message-footer">
                   <span class="message-date">Recibido: {{ msg.createdAt | date: 'dd/MM/yyyy, h:mm a' }}</span>
                   <a
-                    [href]="'https://wa.me/573204876248?text=Hola%20' + msg.fullName + ',%20gracias%20por%20contactar%20a%20Tato%20Studio.'"
+                    [href]="getWhatsAppReplyUrl(msg)"
                     target="_blank"
                     rel="noopener noreferrer"
                     class="btn-reply-wa"

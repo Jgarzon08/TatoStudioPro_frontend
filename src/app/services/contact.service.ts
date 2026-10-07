@@ -7,6 +7,7 @@ import { AuthService } from './auth.service';
 export interface ContactMessagePayload {
   fullName: string;
   email: string;
+  phone: string;
   eventType: string;
   message: string;
 }

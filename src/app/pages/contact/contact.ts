@@ -17,6 +17,7 @@ export class Contact {
 
   fullName = '';
   email = '';
+  phone = '';
   eventType = '';
   message = '';
 
@@ -30,8 +31,8 @@ export class Contact {
     this.errorMessage.set('');
     this.successMessage.set('');
 
-    if (!this.fullName.trim() || !this.email.trim() || !this.eventType || !this.message.trim()) {
-      this.errorMessage.set('Por favor completa todos los campos requeridos.');
+    if (!this.fullName.trim() || !this.email.trim() || !this.phone.trim() || !this.eventType || !this.message.trim()) {
+      this.errorMessage.set('Por favor completa todos los campos requeridos, incluyendo tu teléfono.');
       return;
     }
 
@@ -47,6 +48,7 @@ export class Contact {
       .sendMessage({
         fullName: this.fullName.trim(),
         email: this.email.trim(),
+        phone: this.phone.trim(),
         eventType: this.eventType,
         message: this.message.trim(),
       })
@@ -58,6 +60,7 @@ export class Contact {
           );
           this.fullName = '';
           this.email = '';
+          this.phone = '';
           this.eventType = '';
           this.message = '';
           this.isSubmitted.set(false);

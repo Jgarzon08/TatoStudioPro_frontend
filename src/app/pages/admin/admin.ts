@@ -294,6 +294,19 @@ export class Admin implements OnInit {
     });
   }
 
+  getWhatsAppReplyUrl(msg: ContactMessageItem): string {
+    const raw = (msg.phone || '').replace(/[^0-9]/g, '');
+    let cleanPhone = raw;
+    if (raw.length === 10) {
+      cleanPhone = `57${raw}`;
+    }
+    const clientName = encodeURIComponent(msg.fullName || 'Cliente');
+    if (!cleanPhone) {
+      return `https://wa.me/?text=Hola%20${clientName},%20gracias%20por%20contactar%20a%20Tato%20Studio.`;
+    }
+    return `https://wa.me/${cleanPhone}?text=Hola%20${clientName},%20gracias%20por%20contactar%20a%20Tato%20Studio.%20Recibimos%20tu%20solicitud%20para%20${encodeURIComponent(msg.eventType || 'tu evento')}.`;
+  }
+
   // ==========================================
   // LÓGICA DE SERVICIOS (AGREGAR, EDITAR, BORRAR)
   // ==========================================

@@ -48,6 +48,19 @@
             <span class="error-msg">Ingresa un correo electrónico válido</span>
           </div>
 
+          <div class="input-group-custom" [class.invalid]="isSubmitted() && !phone.trim()">
+            <label for="phoneNumber">Número de Teléfono / WhatsApp</label>
+            <input
+              type="tel"
+              id="phoneNumber"
+              name="phone"
+              placeholder="Ej: 320 487 6248"
+              [(ngModel)]="phone"
+              required
+            >
+            <span class="error-msg">El teléfono es obligatorio</span>
+          </div>
+
           <div class="input-group-custom" [class.invalid]="isSubmitted() && !eventType">
             <label for="eventType">Tipo de Evento o Servicio</label>
             <select

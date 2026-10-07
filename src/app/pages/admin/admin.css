@@ -949,3 +949,10 @@
   color: #666666;
   font-style: italic;
 }
+
+.client-phone {
+  font-size: 13px;
+  color: #333333;
+  margin-bottom: 6px;
+  display: block;
+}
