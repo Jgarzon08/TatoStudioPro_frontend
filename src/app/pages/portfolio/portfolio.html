@@ -1,0 +1,50 @@
+<app-nav-bar></app-nav-bar>
+
+<main>
+  <section class="portfolio-hero">
+    <h1 class="portfolio-main-title">Mi Portafolio</h1>
+    <p class="portfolio-description">
+      Las historias no se cuentan, se ven. Cada imagen es un fragmento de tiempo capturado en su estado más puro. Te invito a recorrer este espacio y a descubrir el mundo a través de mi lente.
+    </p>
+  </section>
+
+  <section class="categories-selection-section">
+    <div class="categories-grid">
+      @for (cat of displayedCategories(); track cat.id; let i = $index) {
+        <div
+          class="category-card"
+          [class.card-wide]="cat.id === 'restaurantes' || i > 2"
+          (click)="openGallery(cat.id)"
+        >
+          <div class="category-card-inner">
+            <img [src]="cat.cover" [alt]="'Colección de ' + cat.title">
+            <div class="category-card-overlay">
+              <h2>{{ cat.title }}</h2>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- POPUP VISOR DE FOTOS -->
+  <div
+    class="gallery-popup-overlay"
+    [class.show]="isPopupOpen()"
+    (click)="closeGallery()"
+  >
+    <button class="close-popup-btn" (click)="closeGallery(); $event.stopPropagation()">&times;</button>
+
+    <button class="nav-popup-btn prev-btn" (click)="prevPhoto(); $event.stopPropagation()">&#10094;</button>
+
+    <div class="popup-viewer-container" (click)="$event.stopPropagation()">
+      @if (isPopupOpen()) {
+        <img id="popup-active-img" [src]="currentImageUrl()" alt="Visor de fotos">
+      }
+    </div>
+
+    <button class="nav-popup-btn next-btn" (click)="nextPhoto(); $event.stopPropagation()">&#10095;</button>
+  </div>
+</main>
+
+<app-footer></app-footer>

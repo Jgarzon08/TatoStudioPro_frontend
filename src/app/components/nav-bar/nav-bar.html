@@ -1,0 +1,90 @@
+<header class="main-header">
+  <div class="header-container">
+    <!-- LOGO PRINCIPAL -->
+    <a routerLink="/" (click)="closeMenu()" class="brand-logo" title="Tato Studio - Inicio">
+      <img src="assets/img-tato-studio.png" alt="Tato Studio Photography" class="logo-img">
+    </a>
+
+    <!-- NAVEGACIÓN ESCRITORIO -->
+    <nav class="desktop-nav" aria-label="Navegación principal">
+      <ul class="nav-links">
+        <li>
+          <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Inicio</a>
+        </li>
+        <li>
+          <a routerLink="/about" routerLinkActive="active">Acerca de mí</a>
+        </li>
+        <li>
+          <a routerLink="/portfolio" routerLinkActive="active">Portafolio</a>
+        </li>
+        <li>
+          <a routerLink="/servicios" routerLinkActive="active">Servicios</a>
+        </li>
+        <li>
+          <a routerLink="/contact" routerLinkActive="active">Contáctame</a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- BOTÓN MENÚ MÓVIL (HAMBURGUESA) -->
+    <button
+      class="mobile-toggle-btn"
+      [class.open]="isMenuOpen()"
+      (click)="toggleMenu()"
+      aria-label="Abrir o cerrar menú"
+      [attr.aria-expanded]="isMenuOpen()"
+    >
+      <span class="hamburger-bar"></span>
+      <span class="hamburger-bar"></span>
+      <span class="hamburger-bar"></span>
+    </button>
+  </div>
+
+  <!-- CORTINA / MENÚ MÓVIL DESLIZABLE -->
+  <div class="mobile-drawer-overlay" [class.show]="isMenuOpen()" (click)="closeMenu()">
+    <div class="mobile-drawer-content" (click)="$event.stopPropagation()">
+      <div class="drawer-header">
+        <img src="assets/img-tato-studio.png" alt="Tato Studio" class="drawer-logo">
+        <button class="drawer-close-btn" (click)="closeMenu()" aria-label="Cerrar menú">&times;</button>
+      </div>
+
+      <nav class="drawer-nav">
+        <ul>
+          <li>
+            <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="closeMenu()">
+              <span class="nav-idx">01</span> Inicio
+            </a>
+          </li>
+          <li>
+            <a routerLink="/about" routerLinkActive="active" (click)="closeMenu()">
+              <span class="nav-idx">02</span> Acerca de mí
+            </a>
+          </li>
+          <li>
+            <a routerLink="/portfolio" routerLinkActive="active" (click)="closeMenu()">
+              <span class="nav-idx">03</span> Portafolio
+            </a>
+          </li>
+          <li>
+            <a routerLink="/servicios" routerLinkActive="active" (click)="closeMenu()">
+              <span class="nav-idx">04</span> Servicios
+            </a>
+          </li>
+          <li>
+            <a routerLink="/contact" routerLinkActive="active" (click)="closeMenu()">
+              <span class="nav-idx">05</span> Contáctame
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- CONTACTO RÁPIDO EN MENÚ MÓVIL -->
+      <div class="drawer-footer">
+        <p class="drawer-location">Bogotá D.C. Colombia</p>
+        <a href="https://wa.me/573204876248" target="_blank" rel="noopener noreferrer" class="drawer-whatsapp-btn">
+          <span>WhatsApp Directo</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</header>

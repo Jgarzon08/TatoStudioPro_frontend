@@ -1,0 +1,87 @@
+<app-nav-bar></app-nav-bar>
+
+<main>
+  <!-- CARRUSEL PRINCIPAL -->
+  <section class="hero-carousel">
+    <div class="carousel-overlay">
+      <h1>Donde las historias cobran vida y los recuerdos se vuelven eternos.</h1>
+    </div>
+
+    <div class="carousel-slides">
+      @for (slide of slides; track $index) {
+        <div class="slide" [class.active]="$index === currentSlide()">
+          <img [src]="slide.image" [alt]="slide.alt">
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- SECCIÓN ACERCA DE MÍ PREVIEW -->
+  <section class="about-preview">
+    <div class="about-text">
+      <h2>Bienvenidos al escenario detrás de la cámara</h2>
+      <p>
+        Me dedico a capturar la esencia de los momentos en su estado más
+        puro. Creo firmemente que la gran fotografía no surge de las
+        poses calculadas, sino de la luz natural, la espontaneidad y
+        las conexiones reales. Mi propósito es transformar instantes
+        fugaces en recuerdos eternos, entregando imágenes con alma que
+        hablen por sí solas y que te permitan revivir cada emoción una y
+        otra vez.
+      </p>
+      <a routerLink="/about" class="btn-link">Leer mi historia</a>
+    </div>
+    <div class="about-image">
+      <img src="assets/caroll1.jpeg" alt="Retrato Tato">
+    </div>
+  </section>
+
+  <!-- SECCIÓN PORTAFOLIO PREVIEW -->
+  <section class="portfolio-preview">
+    <span class="header-portfolio">Trabajos con pasión</span>
+    <h2 class="section-title">Las Colecciones del Portafolio</h2>
+
+    <div class="grid-gallery">
+      <article class="gallery-item-art">
+        <a routerLink="/portfolio">
+          <img src="assets/artes1.jpeg" alt="Colección Editorial de artes">
+          <h3>Arte</h3>
+        </a>
+      </article>
+
+      <div class="gallery-subgrid">
+        <article class="gallery-item-small">
+          <a routerLink="/portfolio">
+            <img src="assets/rest5.jpeg" alt="Detalle de anillos o gastronomía">
+            <h3>Restaurantes</h3>
+          </a>
+        </article>
+
+        <article class="gallery-item-small">
+          <a routerLink="/portfolio">
+            <img src="assets/xv2.jpg" alt="Retrato conceptual blanco y negro">
+            <h3>Celebraciones</h3>
+          </a>
+        </article>
+
+        <article class="gallery-item-wide">
+          <a routerLink="/portfolio">
+            <img src="assets/boda4.jpg" alt="Banquete de bodas iluminado con velas">
+            <h3>Wedding</h3>
+          </a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN CONTACTO PREVIEW -->
+  <section class="index-contact">
+    <h2>¿Listo/a para crear una historia juntos?</h2>
+    <p>Reserva ya tu fecha. Diseñemos algo que perdure para siempre.</p>
+    <div class="cta-buttons">
+      <a routerLink="/contact" class="btn-primary">Reservar una sesión</a>
+    </div>
+  </section>
+</main>
+
+<app-footer></app-footer>

@@ -1,0 +1,553 @@
+<div class="admin-layout">
+  <!-- BARRA SUPERIOR CMS -->
+  <header class="admin-topbar">
+    <div class="topbar-brand">
+      <a routerLink="/" title="Ir a la web principal">
+        <img src="assets/img-tato-studio.png" alt="Tato Studio Logo" class="admin-logo">
+      </a>
+      <div class="brand-titles">
+        <h2>Tato Studio Pro</h2>
+        <span class="badge-cms">Panel Administrador CMS</span>
+      </div>
+    </div>
+
+    <div class="topbar-actions">
+      <div class="user-info">
+        <span class="user-name">{{ authService.currentUser()?.name || 'Administrador' }}</span>
+        <span class="user-role">{{ authService.currentUser()?.email }} ({{ authService.currentUser()?.role }})</span>
+      </div>
+      <a routerLink="/" class="btn-outline-web" title="Ver sitio público">Ver Sitio Web</a>
+      <button (click)="logout()" class="btn-logout" title="Cerrar Sesión">Cerrar Sesión</button>
+    </div>
+  </header>
+
+  <!-- NAVEGACIÓN POR PESTAÑAS -->
+  <nav class="admin-tabs-nav">
+    <button
+      class="tab-btn"
+      [class.active]="activeTab() === 'portfolio'"
+      (click)="activeTab.set('portfolio')"
+    >
+      <span class="tab-icon">📷</span> Fotografías del Portafolio
+    </button>
+
+    <button
+      class="tab-btn"
+      [class.active]="activeTab() === 'messages'"
+      (click)="activeTab.set('messages')"
+    >
+      <span class="tab-icon">✉️</span> Mensajes de Clientes
+      @if (unreadMessagesCount() > 0) {
+        <span class="badge-unread">{{ unreadMessagesCount() }}</span>
+      }
+    </button>
+
+    <button
+      class="tab-btn"
+      [class.active]="activeTab() === 'services'"
+      (click)="activeTab.set('services')"
+    >
+      <span class="tab-icon">💼</span> Servicios y Paquetes
+    </button>
+
+    @if (authService.currentUser()?.role === 'admin') {
+      <button
+        class="tab-btn"
+        [class.active]="activeTab() === 'users'"
+        (click)="activeTab.set('users')"
+      >
+        <span class="tab-icon">👥</span> Usuarios & Equipo
+      </button>
+    }
+  </nav>
+
+  <!-- MENSAJES DE ALERTA FLOTANTES -->
+  @if (alertMessage()) {
+    <div class="alert-banner" [class.alert-banner-success]="alertType() === 'success'" [class.alert-banner-danger]="alertType() === 'danger'">
+      {{ alertMessage() }}
+    </div>
+  }
+
+  <main class="admin-content-wrapper">
+    <!-- ========================================== -->
+    <!-- PESTAÑA 1: GESTIÓN DE PORTAFOLIO           -->
+    <!-- ========================================== -->
+    @if (activeTab() === 'portfolio') {
+      <section class="admin-section">
+        <div class="section-header">
+          <div>
+            <h3>Gestión de Fotografías</h3>
+            <p>Sube hasta 10 fotos simultáneamente, organízalas por categorías y administra el portafolio público.</p>
+          </div>
+        </div>
+
+        <!-- TARJETA DE SUBIDA MULTIPLE -->
+        <div class="admin-card upload-card">
+          <h4>Subir Fotografías (Hasta 10 imágenes a la vez)</h4>
+
+          <div class="upload-grid">
+            <!-- ZONA DE CARGA DE ARCHIVOS -->
+            <div class="upload-dropzone">
+              <label for="photoFiles" class="file-label">
+                @if (filePreviews().length > 0) {
+                  <div class="multi-previews-container">
+                    <p class="previews-count-badge">{{ filePreviews().length }} foto(s) seleccionada(s)</p>
+                    <div class="previews-grid">
+                      @for (prev of filePreviews(); track prev.name; let i = $index) {
+                        <div class="preview-mini-card">
+                          <img [src]="prev.url" [alt]="prev.name" class="preview-img-mini">
+                          <span class="preview-size">{{ prev.sizeKb }} KB</span>
+                          <button
+                            type="button"
+                            (click)="removeSelectedFile(i); $event.stopPropagation();"
+                            class="btn-remove-prev"
+                            title="Quitar esta foto"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      }
+                    </div>
+                    <span class="change-file-text">Seleccionar otro grupo de imágenes</span>
+                  </div>
+                } @else {
+                  <div class="dropzone-placeholder">
+                    <span class="icon-upload">📁</span>
+                    <p>Haz clic para elegir fotos (1 a 10 fotos)</p>
+                    <small>Admite formatos JPG, PNG, WEBP (hasta 15 MB cada una)</small>
+                  </div>
+                }
+              </label>
+
+              <input
+                type="file"
+                id="photoFiles"
+                (change)="onFilesSelected($event)"
+                accept="image/*"
+                multiple
+                class="hidden-file-input"
+              >
+            </div>
+
+            <!-- FORMULARIO DE DETALLES -->
+            <div class="upload-form-fields">
+              <div class="form-group">
+                <label for="photoTitle">Título base de la serie o fotografía *</label>
+                <input
+                  type="text"
+                  id="photoTitle"
+                  placeholder="Ej: Boda Romántica en el Atardecer"
+                  [(ngModel)]="newPhotoTitle"
+                  required
+                >
+                <small class="field-hint">Si subes varias fotos, se numerarán automáticamente (Ej: Título (1), Título (2)...)</small>
+              </div>
+
+              <!-- SELECTOR DE CATEGORÍA CON BOTÓN PARA NUEVA CATEGORÍA -->
+              <div class="form-group">
+                <div class="label-with-action">
+                  <label for="photoCat">Categoría de la Galería *</label>
+                  <button type="button" (click)="toggleNewCategoryInput()" class="btn-text-action">
+                    {{ showNewCategoryInput() ? 'Cancelar' : '➕ Crear Nueva Categoría' }}
+                  </button>
+                </div>
+
+                @if (showNewCategoryInput()) {
+                  <div class="new-category-box">
+                    <input
+                      type="text"
+                      placeholder="Nombre de la nueva categoría (Ej: Sesiones 15 años)"
+                      [(ngModel)]="newCategoryName"
+                      (keyup.enter)="saveNewCategory()"
+                    >
+                    <button type="button" (click)="saveNewCategory()" class="btn-small-primary">
+                      Guardar Categoría
+                    </button>
+                  </div>
+                }
+
+                <select id="photoCat" [(ngModel)]="newPhotoCategory">
+                  @for (cat of categoriesList(); track cat) {
+                    <option [value]="cat">{{ cat | uppercase }}</option>
+                  }
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="photoTags">Etiquetas (Opcional, separadas por coma)</label>
+                <input
+                  type="text"
+                  id="photoTags"
+                  placeholder="Ej: exterior, luz natural, editorial"
+                  [(ngModel)]="newPhotoTags"
+                >
+              </div>
+
+              <button
+                type="button"
+                (click)="uploadPhotos()"
+                class="btn-primary btn-submit-photo"
+                [disabled]="isUploadingPhotos() || filePreviews().length === 0"
+              >
+                {{ isUploadingPhotos() ? 'Subiendo ' + filePreviews().length + ' foto(s)...' : 'Subir ' + (filePreviews().length > 0 ? filePreviews().length + ' foto(s)' : '') + ' al Portafolio' }}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- GRILLA DE FOTOS EXISTENTES -->
+        <div class="admin-card">
+          <div class="card-title-bar">
+            <h4>Fotografías en el Portafolio ({{ portfolioList().length }})</h4>
+          </div>
+
+          @if (portfolioList().length === 0) {
+            <p class="empty-state">No hay fotografías registradas aún en la base de datos.</p>
+          } @else {
+            <div class="photos-grid">
+              @for (item of portfolioList(); track item._id) {
+                <div class="photo-card">
+                  <div class="photo-img-wrapper">
+                    <img [src]="item.imageUrl" [alt]="item.title">
+                    <span class="photo-cat-badge">{{ item.category }}</span>
+                  </div>
+                  <div class="photo-details">
+                    <h5>{{ item.title }}</h5>
+                    <button (click)="deletePhoto(item)" class="btn-delete" title="Eliminar foto">
+                      🗑️ Eliminar
+                    </button>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </section>
+    }
+
+    <!-- ========================================== -->
+    <!-- PESTAÑA 2: BANDEJA DE MENSAJES             -->
+    <!-- ========================================== -->
+    @if (activeTab() === 'messages') {
+      <section class="admin-section">
+        <div class="section-header">
+          <div>
+            <h3>Bandeja de Mensajes de Clientes</h3>
+            <p>Consulta y gestiona los mensajes emitidos por los clientes.</p>
+          </div>
+        </div>
+
+        <!-- FILTROS DE MENSAJES -->
+        <div class="filter-bar">
+          <button
+            class="filter-chip"
+            [class.active]="messageFilter() === 'todos'"
+            (click)="messageFilter.set('todos')"
+          >
+            Todos ({{ messagesList().length }})
+          </button>
+          <button
+            class="filter-chip chip-pending"
+            [class.active]="messageFilter() === 'pendiente'"
+            (click)="messageFilter.set('pendiente')"
+          >
+            Pendientes ({{ unreadMessagesCount() }})
+          </button>
+          <button
+            class="filter-chip chip-read"
+            [class.active]="messageFilter() === 'leido'"
+            (click)="messageFilter.set('leido')"
+          >
+            Leídos
+          </button>
+          <button
+            class="filter-chip chip-replied"
+            [class.active]="messageFilter() === 'respondido'"
+            (click)="messageFilter.set('respondido')"
+          >
+            Respondidos
+          </button>
+        </div>
+
+        @if (filteredMessages().length === 0) {
+          <div class="admin-card">
+            <p class="empty-state">No hay mensajes en la categoría "{{ messageFilter() }}".</p>
+          </div>
+        } @else {
+          <div class="messages-list">
+            @for (msg of filteredMessages(); track msg._id) {
+              <div class="message-card" [class.unread-border]="msg.status === 'pendiente'">
+                <div class="message-header">
+                  <div class="client-meta">
+                    <h4>{{ msg.fullName }}</h4>
+                    <a [href]="'mailto:' + msg.email" class="client-email">{{ msg.email }}</a>
+                    <span class="event-tag">Evento: {{ msg.eventType }}</span>
+                  </div>
+
+                  <div class="message-status-box">
+                    <label>Estado:</label>
+                    <select
+                      [value]="msg.status"
+                      (change)="updateMessageStatus(msg, $event)"
+                      class="status-select"
+                      [class.status-pending]="msg.status === 'pendiente'"
+                      [class.status-read]="msg.status === 'leido'"
+                      [class.status-replied]="msg.status === 'respondido'"
+                    >
+                      <option value="pendiente">Pendiente</option>
+                      <option value="leido">Leído</option>
+                      <option value="respondido">Respondido</option>
+                    </select>
+
+                    <button (click)="deleteMessage(msg)" class="btn-icon-delete" title="Eliminar mensaje">
+                      🗑️
+                    </button>
+                  </div>
+                </div>
+
+                <div class="message-body">
+                  <p>{{ msg.message }}</p>
+                </div>
+
+                <div class="message-footer">
+                  <span class="message-date">Recibido: {{ msg.createdAt | date: 'dd/MM/yyyy, h:mm a' }}</span>
+                  <a
+                    [href]="'https://wa.me/573204876248?text=Hola%20' + msg.fullName + ',%20gracias%20por%20contactar%20a%20Tato%20Studio.'"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="btn-reply-wa"
+                  >
+                    💬 Responder por WhatsApp
+                  </a>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </section>
+    }
+
+    <!-- ========================================== -->
+    <!-- PESTAÑA 3: GESTIÓN DE SERVICIOS            -->
+    <!-- ========================================== -->
+    @if (activeTab() === 'services') {
+      <section class="admin-section">
+        <div class="section-header">
+          <div>
+            <h3>Gestión de Servicios y Paquetes</h3>
+            <p>Crea nuevos paquetes fotográficos, ajusta precios o retira servicios que ya no ofrezcas.</p>
+          </div>
+          <button (click)="toggleNewServiceForm()" class="btn-primary">
+            {{ showNewServiceForm() ? '✕ Cancelar' : '➕ Agregar Nuevo Servicio' }}
+          </button>
+        </div>
+
+        <!-- FORMULARIO CREAR NUEVO SERVICIO -->
+        @if (showNewServiceForm()) {
+          <div class="admin-card create-service-card">
+            <h4>Crear Nuevo Servicio</h4>
+            <div class="edit-service-form">
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label>Título del Servicio *</label>
+                  <input type="text" [(ngModel)]="newServiceTitle" placeholder="Ej: Sesión Newborn / Bebés">
+                </div>
+                <div class="form-group">
+                  <label>Categoría</label>
+                  <input type="text" [(ngModel)]="newServiceCategory" placeholder="Ej: Familia & Maternidad">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Precio Base en Pesos (COP)</label>
+                <input type="number" [(ngModel)]="newServicePrice" placeholder="Ej: 450000">
+              </div>
+
+              <div class="form-group">
+                <label>Descripción del Servicio</label>
+                <textarea rows="3" [(ngModel)]="newServiceDescription" placeholder="Detalla el alcance y la experiencia de la sesión..."></textarea>
+              </div>
+
+              <div class="form-group">
+                <label>Puntos y Características incluidas (Uno por cada línea)</label>
+                <textarea rows="3" [(ngModel)]="newServiceFeatures" placeholder="Sesión de 2 horas en estudio&#10;15 fotos retocadas en alta definición&#10;Galería digital privada"></textarea>
+              </div>
+
+              <div class="edit-actions-row">
+                <button (click)="saveNewService()" class="btn-primary">Publicar Servicio</button>
+                <button (click)="toggleNewServiceForm()" class="btn-cancel">Cancelar</button>
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- FORMULARIO DE EDICIÓN DE SERVICIO EXISTENTE -->
+        @if (editingService()) {
+          <div class="admin-card edit-service-card">
+            <h4>Modificando: {{ editingService()?.title }}</h4>
+            <div class="edit-service-form">
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label>Título del Servicio:</label>
+                  <input type="text" [(ngModel)]="editingService()!.title">
+                </div>
+                <div class="form-group">
+                  <label>Categoría:</label>
+                  <input type="text" [(ngModel)]="editingService()!.category">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Precio Base (COP):</label>
+                <input type="number" [(ngModel)]="editingService()!.price">
+              </div>
+
+              <div class="form-group">
+                <label>Descripción:</label>
+                <textarea rows="3" [(ngModel)]="editingService()!.description"></textarea>
+              </div>
+
+              <div class="edit-actions-row">
+                <button (click)="saveEditedService()" class="btn-primary">Guardar Cambios</button>
+                <button (click)="cancelEditService()" class="btn-cancel">Cancelar</button>
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- LISTADO DE SERVICIOS -->
+        <div class="services-admin-grid">
+          @for (serv of servicesList(); track serv._id) {
+            <div class="service-admin-card">
+              <div class="service-admin-header">
+                <span class="service-admin-cat">{{ serv.category }}</span>
+                <h4>{{ serv.title }}</h4>
+                <div class="service-admin-price">
+                  {{ serv.price | currency: 'COP':'symbol-narrow':'1.0-0' }} COP
+                </div>
+              </div>
+
+              <p class="service-admin-desc">{{ serv.description }}</p>
+
+              @if (serv.features && serv.features.length > 0) {
+                <ul class="service-admin-feats">
+                  @for (feat of serv.features; track feat) {
+                    <li>✓ {{ feat }}</li>
+                  }
+                </ul>
+              }
+
+              <div class="service-card-actions">
+                <button (click)="startEditService(serv)" class="btn-edit-service">
+                  ✏️ Modificar
+                </button>
+                <button (click)="deleteService(serv)" class="btn-delete-service" title="Eliminar servicio">
+                  🗑️ Eliminar
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      </section>
+    }
+
+    <!-- ========================================== -->
+    <!-- PESTAÑA 4: GESTIÓN DE USUARIOS (CMS)       -->
+    <!-- ========================================== -->
+    @if (activeTab() === 'users') {
+      <section class="admin-section">
+        <div class="section-header">
+          <div>
+            <h3>Gestión de Usuarios del Administrador</h3>
+            <p>Administra quiénes tienen acceso al panel CMS y añade nuevos miembros a tu equipo.</p>
+          </div>
+          <button (click)="toggleNewUserForm()" class="btn-primary">
+            {{ showNewUserForm() ? '✕ Cancelar' : '➕ Crear Nuevo Usuario' }}
+          </button>
+        </div>
+
+        <!-- FORMULARIO CREAR USUARIO -->
+        @if (showNewUserForm()) {
+          <div class="admin-card create-user-card">
+            <h4>Registrar Nuevo Usuario</h4>
+            <div class="edit-user-form">
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label>Nombre Completo *</label>
+                  <input type="text" [(ngModel)]="newUserName" placeholder="Ej: Caroll Molina">
+                </div>
+                <div class="form-group">
+                  <label>Correo Electrónico *</label>
+                  <input type="email" [(ngModel)]="newUserEmail" placeholder="ejemplo@tatostudio.com">
+                </div>
+              </div>
+
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label>Contraseña *</label>
+                  <input type="password" [(ngModel)]="newUserPassword" placeholder="••••••••">
+                </div>
+                <div class="form-group">
+                  <label>Rol de Usuario *</label>
+                  <select [(ngModel)]="newUserRole">
+                    <option value="user">Usuario Estándar (Gestión de contenido)</option>
+                    <option value="admin">Administrador Total (Control absoluto)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="edit-actions-row">
+                <button (click)="createUser()" class="btn-primary" [disabled]="isCreatingUser()">
+                  {{ isCreatingUser() ? 'Creando...' : 'Crear Usuario' }}
+                </button>
+                <button (click)="toggleNewUserForm()" class="btn-cancel">Cancelar</button>
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- LISTADO DE USUARIOS -->
+        <div class="admin-card">
+          <div class="card-title-bar">
+            <h4>Usuarios Registrados ({{ usersList().length }})</h4>
+          </div>
+
+          <div class="users-table-wrapper">
+            <table class="users-table">
+              <thead>
+                <tr>
+                  <th>Nombre</th>
+                  <th>Correo Electrónico</th>
+                  <th>Rol</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (u of usersList(); track u._id) {
+                  <tr>
+                    <td><strong>{{ u.name }}</strong></td>
+                    <td>{{ u.email }}</td>
+                    <td>
+                      <span class="user-role-badge" [class.badge-admin]="u.role === 'admin'" [class.badge-user]="u.role === 'user'">
+                        {{ u.role === 'admin' ? 'Administrador' : 'Usuario' }}
+                      </span>
+                    </td>
+                    <td>
+                      @if (u.email !== authService.currentUser()?.email) {
+                        <button (click)="deleteUser(u)" class="btn-icon-delete" title="Eliminar usuario">
+                          🗑️
+                        </button>
+                      } @else {
+                        <span class="current-user-tag">Sesión actual</span>
+                      }
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    }
+  </main>
+</div>

@@ -1,1 +1,83 @@
-/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.cdnfonts.com/css/garamond-libre');
+@import url('https://fonts.cdnfonts.com/css/hanken-grotesk');
+
+:root {
+  --primary-color: #F4F1E6;
+  --secundary-color: #E5E2D8;
+  --text-color: #2b2b2b;
+  --text-menu: #4f4300;
+  --gold-accent: #b8934a;
+  --principal-text: 'Garamond Libre', serif, sans-serif;
+  --secondary-text: 'Hanken Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+  --white: #ffffff;
+  --black: #111111;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--primary-color);
+  color: var(--text-color);
+  font-family: var(--secondary-text);
+  font-size: 16px;
+  line-height: 1.6;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.3s ease;
+}
+
+/* BOTONES GLOBALES */
+.btn-primary {
+  display: inline-block;
+  background-color: var(--text-color);
+  color: var(--primary-color);
+  padding: 16px 40px;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  border: 1px solid var(--text-color);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background-color: transparent;
+  color: var(--text-color);
+}
+
+.btn-link {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 600;
+  border-bottom: 1px solid var(--text-color);
+  padding-bottom: 5px;
+  color: var(--text-color);
+  display: inline-block;
+}
+
+.btn-link:hover {
+  color: var(--text-menu);
+  border-color: var(--text-menu);
+}

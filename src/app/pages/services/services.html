@@ -1,0 +1,54 @@
+<app-nav-bar></app-nav-bar>
+
+<main class="services-wrapper">
+  <!-- HERO SERVICIOS -->
+  <section class="services-hero">
+    <span class="subtitle">Nuestras Propuestas</span>
+    <h1>Servicios diseñados para inmortalizar lo irrepetible</h1>
+    <p class="hero-desc">
+      Combinamos visión estética, sensibilidad artística y técnica profesional para ofrecer experiencias visuales que comunican, emocionan y perduran.
+    </p>
+  </section>
+
+  <!-- LISTADO DE SERVICIOS -->
+  <section class="services-list-section">
+    @for (service of servicesList(); track service.id; let i = $index) {
+      <article class="service-card" [class.reverse]="i % 2 === 1">
+        <div class="service-image-box">
+          <img [src]="service.image" [alt]="service.title">
+        </div>
+
+        <div class="service-info-box">
+          <span class="service-category">{{ service.category }}</span>
+          <h2>{{ service.title }}</h2>
+          <p class="service-description">{{ service.description }}</p>
+
+          <div class="service-features-list">
+            <h4>Incluye:</h4>
+            <ul>
+              @for (feat of service.features; track feat) {
+                <li>
+                  <span class="check-icon">&#10003;</span>
+                  <span>{{ feat }}</span>
+                </li>
+              }
+            </ul>
+          </div>
+
+          <div class="service-cta">
+            <a routerLink="/contact" class="btn-primary">Cotizar este servicio</a>
+          </div>
+        </div>
+      </article>
+    }
+  </section>
+
+  <!-- CTA FINAL -->
+  <section class="services-cta-bottom">
+    <h2>¿Tienes un proyecto personalizado en mente?</h2>
+    <p>Conversemos sobre tus expectativas y creemos una propuesta exclusiva para ti.</p>
+    <a routerLink="/contact" class="btn-primary">Escríbeme ahora</a>
+  </section>
+</main>
+
+<app-footer></app-footer>

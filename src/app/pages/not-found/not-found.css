@@ -1,0 +1,34 @@
+.not-found-wrapper {
+  min-height: 75vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 60px 20px;
+  background-color: var(--primary-color);
+}
+
+.error-code {
+  font-family: var(--principal-text);
+  font-size: 6rem;
+  font-weight: 300;
+  color: var(--text-menu);
+  display: block;
+  line-height: 1;
+  margin-bottom: 10px;
+}
+
+.not-found-content h1 {
+  font-family: var(--principal-text);
+  font-size: 2.6rem;
+  font-weight: 400;
+  margin-bottom: 15px;
+  color: var(--text-color);
+}
+
+.not-found-content p {
+  font-size: 1.1rem;
+  color: var(--text-color);
+  opacity: 0.8;
+  margin-bottom: 35px;
+}

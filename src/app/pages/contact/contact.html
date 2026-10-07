@@ -1,0 +1,118 @@
+<app-nav-bar></app-nav-bar>
+
+<main class="contact-main-wrapper">
+  <section class="contact-hero-section">
+    <div class="contact-glass-container">
+      
+      <!-- FORMULARIO -->
+      <div class="contact-form-block">
+        <h2>Creemos juntos historias que perduren en el tiempo.</h2>
+        <p class="subtitle-form">Escríbeme para cotizar tu próxima sesión o evento.</p>
+
+        @if (successMessage()) {
+          <div class="alert alert-success">
+            {{ successMessage() }}
+          </div>
+        }
+
+        @if (errorMessage()) {
+          <div class="alert alert-danger">
+            {{ errorMessage() }}
+          </div>
+        }
+
+        <form (ngSubmit)="onSubmit()" novalidate>
+          <div class="input-group-custom" [class.invalid]="isSubmitted() && !fullName.trim()">
+            <label for="fullName">Nombre Completo</label>
+            <input
+              type="text"
+              id="fullName"
+              name="fullName"
+              placeholder="Tu Nombre"
+              [(ngModel)]="fullName"
+              required
+            >
+            <span class="error-msg">El nombre es obligatorio</span>
+          </div>
+
+          <div class="input-group-custom" [class.invalid]="isSubmitted() && !email.trim()">
+            <label for="emailAddress">Dirección de Email</label>
+            <input
+              type="email"
+              id="emailAddress"
+              name="email"
+              placeholder="correo@dominio.com"
+              [(ngModel)]="email"
+              required
+            >
+            <span class="error-msg">Ingresa un correo electrónico válido</span>
+          </div>
+
+          <div class="input-group-custom" [class.invalid]="isSubmitted() && !eventType">
+            <label for="eventType">Tipo de Evento o Servicio</label>
+            <select
+              id="eventType"
+              name="eventType"
+              [(ngModel)]="eventType"
+              required
+            >
+              <option value="">Selecciona una opción</option>
+              <option value="Fotografía de productos">Fotografía de productos</option>
+              <option value="Fotografía eventos sociales">Fotografía eventos sociales / Bodas</option>
+              <option value="Plataforma 360">Plataforma 360</option>
+              <option value="Arte y Retrato">Arte y Retrato conceptual</option>
+              <option value="Gastronomía">Restaurantes y Gastronomía</option>
+            </select>
+            <span class="error-msg">Selecciona un tipo de servicio o evento</span>
+          </div>
+
+          <div class="input-group-custom" [class.invalid]="isSubmitted() && !message.trim()">
+            <label for="userMessage">Tu Mensaje</label>
+            <textarea
+              id="userMessage"
+              name="message"
+              rows="4"
+              placeholder="Cuéntame sobre tu visión, las fechas estimadas y la ubicación..."
+              [(ngModel)]="message"
+              required
+            ></textarea>
+            <span class="error-msg">Por favor escribe un breve mensaje</span>
+          </div>
+
+          <button type="submit" class="btn-submit-form" [disabled]="isLoading()">
+            {{ isLoading() ? 'Enviando...' : 'Enviar Consulta' }}
+          </button>
+        </form>
+      </div>
+
+      <!-- INFORMACIÓN DE CONTACTO DIRECTA -->
+      <div class="contact-info-block">
+        <div class="info-item">
+          <span>Ubicación</span>
+          <p>Bogotá / Colombia</p>
+        </div>
+
+        <div class="info-item">
+          <span>Email</span>
+          <p><a href="mailto:carollmolina1993@gmail.com">carollmolina1993@gmail.com</a></p>
+        </div>
+
+        <div class="info-item">
+          <span>Teléfono</span>
+          <p><a href="tel:+573204876248">+57 320 4876248</a></p>
+        </div>
+
+        <div class="info-item">
+          <span>Sígueme en redes</span>
+          <div class="contact-social-links">
+            <a href="https://www.linkedin.com/in/caroll-molina-jerez-60795697/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+            <a href="https://www.instagram.com/tato_vision_?igsh=MXIzczZtYWhrdHhmYQ==" target="_blank" rel="noopener noreferrer">Instagram</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+</main>
+
+<app-footer></app-footer>
